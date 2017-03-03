@@ -1,0 +1,59 @@
+/* =================
+Add more styles here!
+================= */
+
+body {
+    font-family: helvetica, arial, sans-serif;
+}
+
+.sidebar {
+    position: absolute;
+    left: 0px;
+    width: 340px;
+    top: 0;
+    bottom: 0;
+    margin: 20px;
+
+}
+
+#map {
+    position: absolute;
+    right: 0;
+    top: 0;
+    left: 400px;
+    height: 700px;
+
+}
+
+#title1{
+  padding: 10px;
+  height: 100px;
+  background-color: #E4E3E2;
+
+}
+
+#title2{
+  padding-top: 30px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.buttonBox {
+  height: 40px;
+  width: 200px;
+  margin-top: 1000px;
+  background-color:	#f88379;
+  border-radius: 0;
+  padding: 4px;
+  margin: 4px;
+}
+
+
+#buttons {
+
+  border-radius: 0px;
+  height: 26px;
+  padding: 4px;
+  margin: 4px;
+  font-size: 15px;
+}
