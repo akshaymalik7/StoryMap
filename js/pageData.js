@@ -1,14 +1,14 @@
 
 
 
-var headOne = "Chandigarh";
-var headTwo = "New Delhi";
-var headThree = "Puducherry";
-var headFour = "Bengaluru";
-var headFive = "Kannur";
-var headSix = "Philadelphia";
+var headOne = "Chandigarh, India";
+var headTwo = "New Delhi, India";
+var headThree = "Puducherry, India";
+var headFour = "Bengaluru, Karnataka, India";
+var headFive = "Kannur, Kerala, India";
+var headSix = "Philadelphia, Pennsylvania, US";
 
-var parOne = "Some Dang text for page 1";
+var parOne = "Hometown. City Beautiful. Most cherished and frequent journey, was home to school and back. Mostly a bus ride, but sometimes I would miss it on the way back and walk. Living here was experiencing the genious of Le-Corbusier in every moment of life. It is perhaps, one of the least understood peicce of architectural and planning marvel.";
 var parTwo = "Some Dang text for page 2";
 var parThree = "Some Dang text for page 3";
 var parFour = "Some Dang text for page 4";

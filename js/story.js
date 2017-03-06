@@ -1,6 +1,6 @@
 // Defining the first slide
 var currentData = pageData[0];
-var currentPath = pathChandigarh.features[0]
+var currentPath = currentData.info.features[0]
 
 
 /* =====================
@@ -123,7 +123,7 @@ map.on('style.load', function () {
       var curDistance = step / numSteps * lengthAlongLines;
       var movingMarker = turf.along(currentPath, curDistance, 'miles');
       pointSource.setData(movingMarker);
-      map.setCenter(movingMarker.geometry.coordinates);
+      //map.setCenter(movingMarker.geometry.coordinates);
 
     }
 
