@@ -1,100 +1,135 @@
 // Defining the first slide
-var myData = pageData[0];
+var currentData = pageData[0];
+var currentPath = pathChandigarh.features[0]
 
-console.log(myData.center);
-/* =====================
-  Map Data
-===================== */
-var downloadData = $.ajax("http://raw.githubusercontent.com/CPLN692-MUSA611/datasets/master/json/philadelphia-solar-installations.json");
-var parseData = function(i) {
-  return JSON.parse(i);
-};
-
-var makeMarkers = function(i) {
-  var lat;
-  var long;
-  var list=[];
-
-  $.map(i, function(element){
-    var lat =  element.LAT ;
-    var long =  element.LONG_ ;
-    list.push([lat, long]);
-  })
-
-  return list;
-};
-
-
-var plotMarkers = function(somelist) {
-  $.map(somelist, function(list){
-    L.circleMarker(list).addTo(map);
-  }
-)};
-
-downloadData.done(function(data) {
-  var parsed = parseData(data);
-  var markers = makeMarkers(parsed);
-  //console.log(markers);
-  plotMarkers(markers);
-});
 
 /* =====================
   Map Setup
 ===================== */
-
-var map = L.map('map', {
-  center: myData.center,
-  zoom: 12
+mapboxgl.accessToken = 'pk.eyJ1IjoibWFha3MiLCJhIjoiY2l6cjRrZDMxMDF4dTM2cWc3eGxsYjU3diJ9.5wHed5clNi25rKFn34ZMXg';
+var map = new mapboxgl.Map({
+container: 'map',
+style: 'mapbox://styles/maaks/cizxbj1vs003a2ssj17j2ls5y',
+zoom: 12,
+center: [76.785958, 30.733821]
 });
 
-var Stamen_Watercolor = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-	subdomains: 'abcd',
-	minZoom: 1,
-	maxZoom: 16,
-	ext: 'png'
-}).addTo(map);
+map.on('load', function () {
+map.scrollZoom.disable();
+
+    map.addLayer({
+        "id": "route",
+        "type": "line",
+        "source": {
+            "type": "geojson",
+            "data": currentData.info
+        },
+        "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+        },
+        "paint": {
+            "line-color": "#EA1D1D",
+            "line-width": 2,
+            "line-opacity": 0.2
+
+        }
+    });
+});
 
 /* =====================
   Slides
 ===================== */
 
+// Function for clicks
+var cllickFunction = function (i)
+{
+  $("#header").text(i.head);
+  $("#paragraph01").text(i.par);
+  map.setCenter(i.center);
+  console.log(i.center);
+
+}
 
 // Load first slide
-console.log(myData.head);
-$("#title1").text(myData.head);
-$("#title2").text(myData.par);
+console.log(currentData.head);
+cllickFunction(currentData);
 
-// Function for clicks
-var previousClick = function(){
-  var i = myData.number-2;
-  var len = pageData.length
-  if ((len -i)<= len ) {
-    myData = pageData[i];
-    $("#title1").text(myData.head);
-    $("#title2").text(myData.par);
-    map.setView(myData.center);
-  }
-  if ((len-i)> len) {
-    myData = pageData[5];
-    $("#title1").text(myData.head);
-    $("#title2").text(myData.par);
-    map.setView(myData.center);
-  }
+
+var previousClick = function()
+{
+    var i = currentData.number-2;
+    var len = pageData.length
+
+    if ((len -i)<= len ) {
+      currentData= pageData[i];
+      cllickFunction(currentData); }
+
+    else if ((len-i)> len) {
+      currentData = pageData[5];
+      cllickFunction(currentData); }
 }
-var nextClick = function(){
-  var i = myData.number;
+
+var nextClick = function()
+{
+  var i = currentData.number;
   var len = (pageData.length-1)
   if ((len -i)>=0) {
-    myData = pageData[i];
-    $("#title1").text(myData.head);
-    $("#title2").text(myData.par);
-    map.panTo(myData.center);
-  }
-  if ((len-i)< 0) {
-    myData = pageData[0];
-    $("#title1").text(myData.head);
-    $("#title2").text(myData.par);
-    map.panTo(myData.center);
-  }
+    currentData = pageData[i];
+    cllickFunction(currentData); }
+
+  else if ((len-i)< 0) {
+    currentData = pageData[0];
+    cllickFunction(currentData); }
 }
+
+/* =====================
+  Turf - moving a point along the path
+===================== */
+
+//var slicedLines = turf.lineSLice(startChadigarh, stopChadigarh, pathChandigarh.features[0]);
+var lengthAlongLines = turf.lineDistance(currentPath, 'kilometers');
+console.log(lengthAlongLines);
+var movingMarker = turf.along(currentPath,0, 'kilometers');
+
+map.on('style.load', function () {
+
+  map.addSource("circleMarker", {
+    "type": "geojson",
+    "data": movingMarker,
+    "maxzoom": 13
+  });
+
+
+  map.addLayer({
+    "id": "circleMarker",
+    "type": "circle",
+    "source": "circleMarker",
+    "layout": {},
+    "paint": {
+      "circle-radius": 6,
+      "circle-color" : "#EA1D1D"
+
+    }
+  });
+
+  var step = 0;
+  var numSteps = 500; //Change this to set animation resolution
+  var timePerStep = 50; //Change this to alter animation speed
+  var pointSource = map.getSource('circleMarker');
+  var interval = setInterval(function() {
+    step += 1;
+    if (step < numSteps)  {
+      var curDistance = step / numSteps * lengthAlongLines;
+      var movingMarker = turf.along(currentPath, curDistance, 'miles');
+      pointSource.setData(movingMarker);
+      map.setCenter(movingMarker.geometry.coordinates);
+
+    }
+
+    else {
+    //  nextClick();
+    }
+  }
+  , timePerStep);
+  });

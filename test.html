@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title></title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.js'></script>
+  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.12.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    body { margin:0; padding:0; }
+    #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+</head>
+<body>
+
+<div id='map'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoidHdlbGNoIiwiYSI6Il9pX3dtb3cifQ.YcYnsO0X2p3x0HpHPFfleg';
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v8',
+  center: [76.785958, 30.733821],
+  zoom: 20
+});
+var iPath = turf.linestring([
+  [
+    76.78093135356903,
+    30.726737105553394
+  ],
+  [
+    76.78082674741745,
+    30.726843166050074
+  ],
+  [
+    76.77849054336548,
+    30.72536983696254
+  ],
+  [
+    76.77937030792236,
+    30.724318433422912
+  ],
+  [
+    76.80372476577759,
+    30.739558051585878
+  ],
+  [
+    76.80882096290588,
+    30.73351782556705
+  ],
+  [
+    76.80976510047913,
+    30.732300512803892
+  ],
+  [
+    76.80999040603638,
+    30.731894738465847
+  ],
+  [
+    76.81009769439697,
+    30.7318670719715
+  ],
+  [
+    76.81084871292114,
+    30.732263624298295
+  ],
+  [
+    76.81124567985535,
+    30.732531065643904
+  ],
+  [
+    76.81115984916687,
+    30.732918393173485
+  ],
+  [
+    76.81143879890442,
+    30.733139722491458
+  ],
+  [
+    76.8118143081665,
+    30.733342607253032
+  ],
+  [
+    76.8112564086914,
+    30.73294605936601
+  ],
+  [
+    76.81144952774048,
+    30.732632508718776
+  ],
+  [
+    76.81009769439697,
+    30.731811738958964
+  ],
+  [
+    76.80996894836426,
+    30.731747183737525
+  ],
+  [
+    76.80936813354491,
+    30.732604842436228
+  ],
+  [
+    76.80862784385681,
+    30.73350860355847
+  ],
+  [
+    76.80112838745117,
+    30.728888266285633
+  ],
+  [
+    76.79597854614258,
+    30.734458465806828
+  ],
+  [
+    76.77925229072571,
+    30.724110918211444
+  ],
+  [
+    76.77825450897217,
+    30.725291443234596
+  ],
+  [
+    76.7809434235096,
+    30.7269630603841
+  ]
+
+]);
+var iPathLength = turf.lineDistance(iPath, 'miles');
+console.log(iPath);
+var iPoint = turf.along(iPath, 0, 'miles');
+map.on('style.load', function () {
+  map.addSource("path", {
+    "type": "geojson",
+    "data": iPath,
+    "maxzoom": 12
+  });
+  map.addLayer({
+    "id": "path",
+    "type": "line",
+    "source": "path",
+    "layout": {
+      "line-join": "round",
+      "line-cap": "round"
+    },
+    "paint": {
+      "line-color": "#888",
+      "line-width": 2
+    }
+  });
+  map.addSource("peep", {
+    "type": "geojson",
+    "data": iPoint,
+    "maxzoom": 20
+  });
+  map.addLayer({
+    "id": "peep",
+    "type": "circle",
+    "source": "peep",
+    "layout": {},
+    "paint": {
+      "circle-radius": 4
+    }
+  });
+  var step = 0;
+  var numSteps = 500; //Change this to set animation resolution
+  var timePerStep = 20; //Change this to alter animation speed
+  var pSource = map.getSource('peep');
+  var interval = setInterval(function() {
+    step += 1;
+    if (step > numSteps) {
+      clearInterval(interval);
+    } else {
+      var curDistance = step / numSteps * iPathLength;
+      var iPoint = turf.along(iPath, curDistance, 'miles');
+      pSource.setData(iPoint);
+      console.log(curDistance);
+    }
+  }, timePerStep);
+});
+</script>
+
+</body>
+</html>
