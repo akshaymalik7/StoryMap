@@ -174,6 +174,7 @@ map.on('style.load', function () {
       var curDistance = step / numSteps * iPathLength;
       var iPoint = turf.along(iPath, curDistance, 'miles');
       pSource.setData(iPoint);
+
       console.log(curDistance);
     }
   }, timePerStep);

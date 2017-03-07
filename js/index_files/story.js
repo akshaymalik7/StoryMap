@@ -1,5 +1,5 @@
 // Defining the value for first slide
-var currentData = pageData[0];
+var currentData = pageData[1];
 var currentPath = currentData.info.features[0];
 
 /* =====================
@@ -64,7 +64,7 @@ var addMovingMarker = function()
     });
 
     var step = 0;
-    var numSteps = 500; //Change this to set animation resolution
+    var numSteps = 200; //Change this to set animation resolution
     var timePerStep = 20; //Change this to alter animation speed
     var pointSource = map.getSource('circleMarker');
     var interval = setInterval(function() {
@@ -89,7 +89,7 @@ var addMovingMarker = function()
   Slides
 ===================== */
 
-
+// Map track Upodate
 
 // Function for clicks
 var clickFunction = function (i)
@@ -97,12 +97,16 @@ var clickFunction = function (i)
   $("#header").text(i.head); // Changing Header Information
   $("#paragraph01").text(i.par); // Changing Description
   map.setCenter(i.center); // reset the center of map to new city
-  map.setZoom(i.zoom); // Just in case User moved around - click will correct the zoom
+  map.setZoom(12); // Just in case User moved around - click will correct the zoom
   lengthAlongLines = turf.lineDistance(currentPath, 'kilometers');
   movingMarker = turf.along(currentPath,0, 'kilometers');
   addMovingMarker(); // moving marker along the path
   pathTrack();
 }
+
+
+
+
 
 // Load first slide
 clickFunction(currentData);
@@ -119,8 +123,9 @@ var previousClick = function()
       currentPath = currentData.info.features[0];
       clickFunction(currentData);
       //console.log(currentPath);
-      map.getSource('route').setData(currentPath);// Map track Upodate
-
+      map.getSource('route').setData(currentPath);
+      //var source = map.getSource('route')
+      //console.log(source._data.geometry);
 
     }
 
